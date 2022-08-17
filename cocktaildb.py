@@ -5,8 +5,6 @@ from string import ascii_lowercase as INITIALS
 import sys
 import os
 
-#THIS PROGRAM'S ONLY PURPOSE IS FOR ME TO TEST MY PYTHON SKILLS. Every single line in this code was written by me without looking for any help online.
-
 #OS CHECK
 os_ = sys.platform
 if os_ == "win32":
