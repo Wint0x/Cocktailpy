@@ -1,6 +1,7 @@
 import requests
 import json
-from string import ascii_lowercase as INITIALS
+from string import digits, ascii_lowercase as INITIALS
+from itertools import chain
 
 import sys
 import os
@@ -152,6 +153,9 @@ def search_by_initial(initial:str) -> str:
 
         #Access stuff
         content = content["drinks"]
+        if not content:
+            os.system("color E")
+            return print(f"\nNothing found for {initial}!\n")
     except Exception as ex:
         c.r()
         return print(f"\nUh Oh, something was done wrong!\nDetails: {ex}")
@@ -184,7 +188,7 @@ def main():
             case "--search":
                 #Question and "left-blank" check
                 while True:
-                    n = input("Enter a cocktail to seach: ")
+                    n = input("Enter a cocktail to search: ")
 
                     if not n:
                         c.y()
@@ -216,7 +220,7 @@ def main():
             cmd2 = cmd2.lower()
 
             #Error handling
-            if not cmd2 in INITIALS:
+            if not cmd2 in list(chain(INITIALS,digits)):
                 c.r()
                 print("\nPlease enter a valid letter! (Example: \"a\")\n")
                 return
