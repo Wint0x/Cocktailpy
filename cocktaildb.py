@@ -196,6 +196,32 @@ def search_ingredient(name:str) -> str:
     print(desc)
     print(f"\nType: {type_}")
     print(f"Alcoholic: {has_alcohol}")
+
+def search_by_ingredient(ingredient:str) -> str:
+    URL = f"https://www.thecocktaildb.com/api/json/v1/1/filter.php?i={ingredient}"
+
+    try:
+        req = requests.get(URL)
+        content = json.loads(req.text)
+
+        #Access stuff
+        content = content["drinks"]
+        if not content:
+            os.system("color E")
+            return print(f"\nNothing found for {ingredient}!\n")
+        
+    except Exception as ex:
+        c.r()
+        return print(f"\nUh Oh, something was done wrong!\nDetails: {ex}")
+
+    
+    #Get values of each dictionary in list
+    values = [cnt["strDrink"] for cnt in content]
+
+    for count, v in enumerate(values, start=1):
+        print(f"[{count}] {v}")
+
+    
     
     
 def main():
@@ -249,6 +275,22 @@ def main():
 
                 c.b()
                 search_ingredient(n)
+                return
+
+            case "--byingredient":
+                #Question and "left-blank" check... again
+                while True:
+                    n = input("Enter ingredient: ")
+
+                    if not n:
+                        c.y()
+                        print("\nYou can't leave this field empty!\n")
+                        continue
+                    break
+
+                c.b()
+                print(f"THE FOLLOWING COCKTAILS CAN BE MADE WITH {n.upper()}\n")
+                search_by_ingredient(n)
                 return
 
             case _:
