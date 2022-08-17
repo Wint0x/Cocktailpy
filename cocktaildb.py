@@ -2,6 +2,8 @@ import requests
 import json
 from string import digits, ascii_lowercase as INITIALS
 from itertools import chain
+from shutil import copyfileobj
+from PIL import Image
 
 import sys
 import os
@@ -40,10 +42,13 @@ HELP = """[INTRO]
 -h OR --help: Show this menu.
 
 [COCKTAIL DATABASE]
---search: Search cocktail by name.
---random: Returns information for a random cocktail!
---searchby INITIAL: Returns a list of cocktails starting by a letter (example: --searchby a)
---ingredient: Search information for a cocktail ingredient!
+-s: Search cocktail by name.
+-r: Returns information for a random cocktail!
+-i: Search information for a cocktail ingredient!
+
+--byi: Returns a list of cocktails that contain a specified ingredient.
+--bys INITIAL: Returns a list of cocktails starting by a letter (example: --searchby a)
+--img: Download an image of a cocktail and open it.
 """
 
 LOGO = r"""
@@ -221,6 +226,41 @@ def search_by_ingredient(ingredient:str) -> str:
     for count, v in enumerate(values, start=1):
         print(f"[{count}] {v}")
 
+
+def get_img(cocktail:str) -> str:
+    URL = f"https://www.thecocktaildb.com/api/json/v1/1/search.php?s={cocktail}"
+
+    try:
+        req = requests.get(URL)
+        content = json.loads(req.text)
+
+        #Access stuff
+        content = content["drinks"]
+        if not content:
+            os.system("color E")
+            return print(f"\nNothing found for {cocktail}!\n")
+        
+    except Exception as ex:
+        c.r()
+        return print(f"\nUh Oh, something was done wrong!\nDetails: {ex}")
+
+    file = cocktail.title() + ".jpg"
+    thumbnail_url = content[0]["strDrinkThumb"]
+
+    #Save file
+    try:
+        image_req = requests.get(thumbnail_url, stream=True)
+        
+        if image_req.status_code == 200:
+            with open(file, 'wb') as fl:
+                copyfileobj(image_req.raw,fl)
+            print(f"\nFile saved in {os.path.join(os.getcwd(), file)}")
+            img = Image.open(file).show()
+            
+    except Exception as ex:
+        print(f"\n{ex}\n")
+        return
+    
     
     
     
@@ -242,7 +282,7 @@ def main():
                 return
 
             #Search for cocktail by name
-            case "--search":
+            case "-s":
                 #Question and "left-blank" check
                 while True:
                     n = input("Enter a cocktail to search: ")
@@ -258,11 +298,11 @@ def main():
                 search_cocktail(n)
                 return
 
-            case "--random":
+            case "-r":
                 search_cocktail("",True)
                 return
 
-            case "--ingredient":
+            case "-i":
                 #Question and "left-blank" check... again
                 while True:
                     n = input("Enter an ingredient to search: ")
@@ -277,7 +317,7 @@ def main():
                 search_ingredient(n)
                 return
 
-            case "--byingredient":
+            case "--byi":
                 #Question and "left-blank" check... again
                 while True:
                     n = input("Enter ingredient: ")
@@ -293,6 +333,23 @@ def main():
                 search_by_ingredient(n)
                 return
 
+            #Search for cocktail by name (get image url)
+            case "--img":
+                #Question and "left-blank" check
+                while True:
+                    n = input("Enter a cocktail to search: ")
+
+                    if not n:
+                        c.y()
+                        print("\nYou can't leave this field empty!\n")
+                        continue
+                    break
+
+                c.b()
+                
+                get_img(n)
+                return
+
             case _:
                 c.r()
                 print("This command does nothing!\n".upper())
@@ -304,7 +361,7 @@ def main():
         cmd2 = sys.argv[2]
 
         #Get list of cocktails by initial ^_^
-        if cmd1 == "--searchby" and cmd2:
+        if cmd1 == "--bys" and cmd2:
             cmd2 = cmd2.lower()
 
             #Error handling
