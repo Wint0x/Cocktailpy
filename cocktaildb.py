@@ -88,7 +88,7 @@ def search_cocktail(name:str, random:bool = False) -> str:
 
     #Access every dictionary in list and gather values
     for c,element in enumerate(content,start=1):
-        print(f"\n\n===COCKTAIL VARIATION {c}===\n")
+        print(f"\n\n===COCKTAIL VARIATION {c}===\n" if len(content) > 1 else "")
         #strIngredients and strMeasures
         ing = [f"strIngredient{x}" for x in range(1, 21)]
         msr = [f"strMeasure{x}" for x in range(1, 21)]
