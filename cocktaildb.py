@@ -5,6 +5,8 @@ from string import ascii_lowercase as INITIALS
 import sys
 import os
 
+#THIS PROGRAM'S ONLY PURPOSE IS FOR ME TO TEST MY PYTHON SKILLS. Every single line in this code was written by me without looking for any help online.
+
 #OS CHECK
 os_ = sys.platform
 if os_ == "win32":
@@ -20,6 +22,7 @@ class Colors:
         os.system("color 3")
     def y():
         os.system("color E")
+
 
 c = Colors
 
@@ -79,60 +82,63 @@ def search_cocktail(name:str, random:bool = False) -> str:
 
         #Access stuff
         content = content["drinks"]
-        content = {k:v for k,v in content[0].items()}
     except Exception as ex:
         c.r()
         return print(f"\nUh Oh, something was done wrong!\nDetails: {ex}")
 
     #print(content)
 
-    #strIngredients and strMeasures
-    ing = [f"strIngredient{x}" for x in range(1, 21)]
-    msr = [f"strMeasure{x}" for x in range(1, 21)]
-    ingredients = []
-    measures = []
+    #Access every dictionary in list and gather values
+    for c,element in enumerate(content,start=1):
+        print(f"\n\n===COCKTAIL VARIATION {c}===\n")
+        #strIngredients and strMeasures
+        ing = [f"strIngredient{x}" for x in range(1, 21)]
+        msr = [f"strMeasure{x}" for x in range(1, 21)]
+        ingredients = []
+        measures = []
 
-    #Get all possible existing ingredients in a range from 1 to 20
-    for n in ing:
-        try:
-            current_ingredient = content[n]
-            ingredients.append(current_ingredient)
-        except:
-            continue
-    for n in msr:
-        try:
-            current_measure = content[n]
-            measures.append(current_measure)
-        except:
-            continue
+        #Get all possible existing ingredients in a range from 1 to 20
+        for n in ing:
+            try:
+                current_ingredient = element[n]
+                ingredients.append(current_ingredient)
+            except:
+                continue
+        for n in msr:
+            try:
+                current_measure = element[n]
+                measures.append(current_measure)
+            except:
+                continue
+            
+        #Remove NoneType values
+        ingredients = list(filter(lambda x: x is not None, ingredients))
+        measures = list(filter(lambda x: x is not None, measures))
+
+        #Assign number on each elemnt
+        for i in range(len(measures)):
+            measures[i] = f"[{str(i+1)}] {measures[i]}" #Assign the number i that takes the value of each list's index and format it to the ingredients name (weird to explain)
+
+        m_i = list(zip(measures,ingredients))
         
-    #Remove NoneType values
-    ingredients = list(filter(lambda x: x is not None, ingredients))
-    measures = list(filter(lambda x: x is not None, measures))
+        #Get info
+        name = element["strDrink"]
+        category = element["strCategory"]
+        glass:str = element["strGlass"]
+        alcohol: str = ["Yes" if element["strAlcoholic"] == "Alcoholic" else "No"]
+        instructions: str = element["strInstructions"]
+        
+        #PRINTING
+        print(f"#Cocktail name: {name.title()}")
+        print(f"#Category: {category}")
+        print(f"#Glass: {glass}")
+        print(f"#Alcoholic: {alcohol[0]}")
+        print("\n###INGREDIENTS###")
+        for x in m_i:
+            print(f"{x[0]}-> {x[1]}")
+        print(f"\n###INSTRUCTIONS###\n{instructions}")
+    
 
-    #Assign number on each elemnt
-    for i in range(len(measures)):
-        measures[i] = f"[{str(i+1)}] {measures[i]}" #Assign the number i that takes the value of each list's index and format it to the ingredients name (weird to explain)
-
-    m_i = list(zip(measures,ingredients))
-    
-    #Get info
-    name = content["strDrink"]
-    category = content["strCategory"]
-    glass:str = content["strGlass"]
-    alcohol: str = ["Yes" if content["strAlcoholic"] == "Alcoholic" else "No"]
-    instructions: str = content["strInstructions"]
-    
-    #PRINTING
-    print(f"#Cocktail name: {name.title()}")
-    print(f"#Category: {category}")
-    print(f"#Glass: {glass}")
-    print(f"#Alcoholic: {alcohol[0]}")
-    print("\n###INGREDIENTS###")
-    for x in m_i:
-        print(f"{x[0]}-> {x[1]}")
-    print(f"\n###INSTRUCTIONS###\n{instructions}")
-    
 #Search by initial
 def search_by_initial(initial:str) -> str:
     URL = f"https://www.thecocktaildb.com/api/json/v1/1/search.php?f={initial}"
@@ -214,6 +220,9 @@ def main():
 
             search_by_initial(cmd2)
             return
+
+
+        
 
     #No command given
     else:
