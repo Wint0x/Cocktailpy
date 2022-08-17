@@ -80,8 +80,13 @@ def search_cocktail(name:str, random:bool = False) -> str:
 
         #Access stuff
         content = content["drinks"]
+
+        if not content:
+            os.system("color E")
+            return print(f"\nNothing found for {name}!\n")
+        
     except Exception as ex:
-        c.r()
+        os.system("color 4")
         return print(f"\nUh Oh, something was done wrong!\nDetails: {ex}")
 
     #print(content)
