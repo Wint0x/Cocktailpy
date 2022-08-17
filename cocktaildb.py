@@ -244,9 +244,10 @@ def get_img(cocktail:str) -> str:
         c.r()
         return print(f"\nUh Oh, something was done wrong!\nDetails: {ex}")
 
-    file = cocktail.title() + ".jpg"
+    cocktail_name = content[0]["strDrink"]
     thumbnail_url = content[0]["strDrinkThumb"]
-
+    file = cocktail_name + ".jpg"
+    
     #Save file
     try:
         image_req = requests.get(thumbnail_url, stream=True)
@@ -256,6 +257,8 @@ def get_img(cocktail:str) -> str:
                 copyfileobj(image_req.raw,fl)
             print(f"\nFile saved in {os.path.join(os.getcwd(), file)}")
             img = Image.open(file).show()
+        else:
+            raise Exception(f"{thumbnail_url} returned status code: {image_req.status_code}")
             
     except Exception as ex:
         print(f"\n{ex}\n")
