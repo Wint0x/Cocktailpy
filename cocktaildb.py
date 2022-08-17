@@ -43,6 +43,7 @@ HELP = """[INTRO]
 --search: Search cocktail by name.
 --random: Returns information for a random cocktail!
 --searchby INITIAL: Returns a list of cocktails starting by a letter (example: --searchby a)
+--ingredient: Search information for a cocktail ingredient!
 """
 
 LOGO = r"""
@@ -166,6 +167,36 @@ def search_by_initial(initial:str) -> str:
     print(f"Found {len(drinks)} cocktails!\n")
     for count, cocktail in enumerate(drinks,start=1):
         print(f"[{count}] {cocktail}")
+
+def search_ingredient(name:str) -> str:
+    URL = f"https://www.thecocktaildb.com/api/json/v1/1/search.php?i={name}"
+
+    try:
+        req = requests.get(URL)
+        content = json.loads(req.text)
+
+        #Access stuff
+        content = content["ingredients"]
+        if not content:
+            os.system("color E")
+            return print(f"\nNothing found for {name}!\n")
+        
+    except Exception as ex:
+        c.r()
+        return print(f"\nUh Oh, something was done wrong!\nDetails: {ex}")
+
+    cn = content[0]
+    name: str = cn["strIngredient"]
+    desc: str = cn["strDescription"]
+    type_: str = cn["strType"]
+    has_alcohol: str = "Yes" if cn["strAlcohol"] == "Yes" else "No"
+
+    print(f"NAME: {name}\n")
+    print(f"###DESCRIPTION###\n")
+    print(desc)
+    print(f"\nType: {type_}")
+    print(f"Alcoholic: {has_alcohol}")
+    
     
 def main():
     if len(sys.argv) == 2:
@@ -205,6 +236,21 @@ def main():
                 search_cocktail("",True)
                 return
 
+            case "--ingredient":
+                #Question and "left-blank" check... again
+                while True:
+                    n = input("Enter an ingredient to search: ")
+
+                    if not n:
+                        c.y()
+                        print("\nYou can't leave this field empty!\n")
+                        continue
+                    break
+
+                c.b()
+                search_ingredient(n)
+                return
+
             case _:
                 c.r()
                 print("This command does nothing!\n".upper())
@@ -227,9 +273,6 @@ def main():
 
             search_by_initial(cmd2)
             return
-
-
-        
 
     #No command given
     else:
