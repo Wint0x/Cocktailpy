@@ -5,8 +5,6 @@ from string import ascii_lowercase as INITIALS
 import sys
 import os
 
-#THIS PROGRAM'S ONLY PURPOSE IS FOR ME TO TEST MY PYTHON SKILLS. Every single line in this code was written by me without looking for any help online.
-
 #OS CHECK
 os_ = sys.platform
 if os_ == "win32":
@@ -22,7 +20,6 @@ class Colors:
         os.system("color 3")
     def y():
         os.system("color E")
-
 
 c = Colors
 
@@ -136,7 +133,6 @@ def search_cocktail(name:str, random:bool = False) -> str:
         print(f"{x[0]}-> {x[1]}")
     print(f"\n###INSTRUCTIONS###\n{instructions}")
     
-
 #Search by initial
 def search_by_initial(initial:str) -> str:
     URL = f"https://www.thecocktaildb.com/api/json/v1/1/search.php?f={initial}"
@@ -218,9 +214,6 @@ def main():
 
             search_by_initial(cmd2)
             return
-
-
-        
 
     #No command given
     else:
