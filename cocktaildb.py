@@ -8,6 +8,13 @@ from PIL import Image
 import sys
 import os
 
+#Internet connection check
+try:
+    internet = requests.get("https://www.httpbin.org/status/200")
+except:
+    print("YOU DON'T HAVE INTERNET ACCESS, CLOSING PROGRAM!")
+    sys.exit()
+
 #OS CHECK
 os_ = sys.platform
 if os_ == "win32":
@@ -261,6 +268,7 @@ def get_img(cocktail:str) -> str:
             raise Exception(f"{thumbnail_url} returned status code: {image_req.status_code}")
             
     except Exception as ex:
+        c.r()
         print(f"\n{ex}\n")
         return
     
